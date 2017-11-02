@@ -1,17 +1,24 @@
+import RgbLed from './RgbLed';
 import * as THREE from 'three';
 
-export default class Torus extends Object3D {
-  constructor() {
+export default class Ring extends THREE.Object3D {
+  constructor(numberOfLeds, ledDiameter, r, g, b, plane) {
     super();
-
-    // const geometry = new TorusKnotBufferGeometry(2, 0.25, 100, 16);
-    // const material = new MeshStandardMaterial({color: 0xA197C9, roughness: 0.18, metalness: 0.5});
-    // const mesh = new Mesh(geometry, material);
-
-    var geometry = new THREE.TorusBufferGeometry( 10, 3, 16, 100 );
-    var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-    var mesh = new THREE.Mesh( geometry, material );
-
-    this.add(mesh);
+    this.leds = [];
+    var led;
+    for(var i = 0; i < numberOfLeds; i++) {
+        var x = Math.cos(2 * Math.PI * i / numberOfLeds);
+        var y = Math.sin(2 * Math.PI * i / numberOfLeds);
+        if (plane && plane === "x") {
+          led = new RgbLed(ledDiameter, r, g, b, 0, x, y);
+        } else if (plane && plane === "y") {
+          led = new RgbLed(ledDiameter, r, g, b, x, 0, y);
+        } else {
+          // assume z
+          led = new RgbLed(ledDiameter, r, g, b, x, y, 0);
+        }
+        this.add(led);
+        this.leds.push(led);
+    }
   }
 }
